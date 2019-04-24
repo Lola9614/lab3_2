@@ -20,5 +20,4 @@ public class IncomingInfo {
 	public SubsciptionType getSubscriptionType() {		
 		return subscriptionType;
 	}
-
 }
