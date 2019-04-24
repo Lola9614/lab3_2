@@ -3,6 +3,8 @@ package edu.iis.mto.staticmock;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -21,7 +23,8 @@ class NewsLoaderTest {
     private IncomingInfo testCOntent2;
     private IncomingInfo testCOntent3;
 
-    @Test public void setup() throws Exception {
+    @Test
+    public void sholudProperlySplitIncomigNews() throws Exception {
         NewsLoader newsLoader = new NewsLoader();
 
         IncomingNews incomingNews = new IncomingNews();
@@ -45,6 +48,27 @@ class NewsLoaderTest {
         publishableNewsExpected.addPublicInfo(testCOntent4.getContent());
 
         assertThat(publishableNewsActual,is(publishableNewsExpected));
+    }
+
+    @Test
+    public void shouldCallOncePubliherMetod() throws Exception {
+
+        NewsLoader spy = PowerMockito.spy(new NewsLoader());
+
+        IncomingNews incomingNews = new IncomingNews();
+        testCOntent1 = new IncomingInfo("testCOntent", SubsciptionType.A);
+        incomingNews.add(testCOntent1);
+        testCOntent2 = new IncomingInfo("testCOntent", SubsciptionType.B);
+        incomingNews.add(testCOntent2);
+        testCOntent3 = new IncomingInfo("testCOntent", SubsciptionType.C);
+        incomingNews.add(testCOntent3);
+
+        IncomingInfo testCOntent4 = new IncomingInfo("testCOntent", SubsciptionType.NONE);
+        incomingNews.add(testCOntent4);
+
+
+        PowerMockito.verifyPrivate(spy, Mockito.times(1)).invoke("prepareForPublish",incomingNews);
+
     }
 
 }
