@@ -1,6 +1,7 @@
 package edu.iis.mto.staticmock;
 
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -14,30 +15,30 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({NewsReaderFactory.class, ConfigurationLoader.class})
-class NewsLoaderTest {
-
-    public NewsLoaderTest() {
-    }
+public class NewsLoaderTest {
 
     private IncomingInfo testCOntent1;
     private IncomingInfo testCOntent2;
     private IncomingInfo testCOntent3;
+    private IncomingInfo testCOntent4;
+    private IncomingNews incomingNews = new IncomingNews();
+    private NewsLoader newsLoader = new NewsLoader();
 
-    @Test
-    public void sholudProperlySplitIncomigNews() throws Exception {
-        NewsLoader newsLoader = new NewsLoader();
+    @Before
+    public void setup(){
 
-        IncomingNews incomingNews = new IncomingNews();
         testCOntent1 = new IncomingInfo("testCOntent", SubsciptionType.A);
         incomingNews.add(testCOntent1);
         testCOntent2 = new IncomingInfo("testCOntent", SubsciptionType.B);
         incomingNews.add(testCOntent2);
         testCOntent3 = new IncomingInfo("testCOntent", SubsciptionType.C);
         incomingNews.add(testCOntent3);
-
-        IncomingInfo testCOntent4 = new IncomingInfo("testCOntent", SubsciptionType.NONE);
+        testCOntent4 = new IncomingInfo("testCOntent", SubsciptionType.NONE);
         incomingNews.add(testCOntent4);
+    }
 
+    @Test
+    public void sholudProperlySplitIncomingNews() throws Exception {
         PublishableNews publishableNewsActual = Whitebox.invokeMethod(newsLoader, "prepareForPublish", incomingNews);
 
         PublishableNews publishableNewsExpected = new PublishableNews();
@@ -54,19 +55,6 @@ class NewsLoaderTest {
     public void shouldCallOncePubliherMetod() throws Exception {
 
         NewsLoader spy = PowerMockito.spy(new NewsLoader());
-
-        IncomingNews incomingNews = new IncomingNews();
-        testCOntent1 = new IncomingInfo("testCOntent", SubsciptionType.A);
-        incomingNews.add(testCOntent1);
-        testCOntent2 = new IncomingInfo("testCOntent", SubsciptionType.B);
-        incomingNews.add(testCOntent2);
-        testCOntent3 = new IncomingInfo("testCOntent", SubsciptionType.C);
-        incomingNews.add(testCOntent3);
-
-        IncomingInfo testCOntent4 = new IncomingInfo("testCOntent", SubsciptionType.NONE);
-        incomingNews.add(testCOntent4);
-
-
         PowerMockito.verifyPrivate(spy, Mockito.times(1)).invoke("prepareForPublish",incomingNews);
 
     }
